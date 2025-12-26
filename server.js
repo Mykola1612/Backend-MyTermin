@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import app from "./app.js";
+import { app } from "./app.js";
 
 const DB_HOST =
   "mongodb+srv://Mykola:b30HFkHdVkHaIUVT@cluster0.v2e3tim.mongodb.net/db-mytermin?appName=Cluster0";

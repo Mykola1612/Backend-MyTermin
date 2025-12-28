@@ -23,9 +23,19 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// DEV
 app.get("/api", async (req, res) => {
   res.send("<a href='/api/auth/google'>Google auth</a>");
 });
+
+app.get("/api/google", (req, res) => {
+  res.json({
+    message: "Google auth success",
+    token: req.query.token,
+  });
+});
+//
+
 app.use("/api/auth", authRouter);
 app.use("/api/tasks", tasksRouter);
 app.use("/api/users", usersRouter);

@@ -19,14 +19,7 @@ router.get(
 
 router.get(
   "/google/callback",
-  passport.authenticate(
-    "google"
-    // {
-    // successRedirect: "/api",
-    // failureRedirect: "/failure",
-    // session: false,
-    // }
-  ),
+  passport.authenticate("google"),
   ctrl.googleSignup
 );
 

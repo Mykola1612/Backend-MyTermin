@@ -9,4 +9,5 @@ export const env = {
   sessionSecret: process.env.SESSION_SECRET_KEY,
   googleClientId: process.env.GOOGLE_CLIENT_ID,
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  frontendUrl: process.env.FRONTEND_URL,
 };

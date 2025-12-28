@@ -67,6 +67,7 @@ const googleSignup = async (req, res, next) => {
     expiresIn: "23h",
   });
   const user = await User.findByIdAndUpdate(_id, { token });
+  res.redirect(`${env.frontendUrl}/google?token=${token}`);
 };
 
 export default {

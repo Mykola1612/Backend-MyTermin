@@ -1,5 +1,11 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import mongoose from "mongoose";
 import { app } from "./app.js";
+
+console.log(process.env.GOOGLE_CLIENT_ID);
+console.log(process.env.GOOGLE_CLIENT_SECRET);
 
 const { DB_HOST } = process.env;
 mongoose.set("strictQuery", true);

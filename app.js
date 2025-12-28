@@ -1,16 +1,33 @@
 import express from "express";
-import dotenv from "dotenv";
-import tasksRouter from "./routes/api/tasks.js";
 import cors from "cors";
 
-dotenv.config();
+import passport from "passport";
+import session from "express-session";
+
+import tasksRouter from "./routes/api/tasks.js";
+import authRouter from "./routes/api/auth.js";
+import usersRouter from "./routes/api/users.js";
 
 export const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(
+  session({
+    secret: process.env.MY_SESSION_SECRET_KEY,
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
+app.get("/api", async (req, res) => {
+  res.send("<a href='/api/auth/google'>Google auth</a>");
+});
+app.use("/api/auth", authRouter);
 app.use("/api/tasks", tasksRouter);
+app.use("/api/users", usersRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });

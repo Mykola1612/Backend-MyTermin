@@ -5,10 +5,10 @@ import { Schema, model } from "mongoose";
 
 const taskSchema = new Schema(
   {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      //   required: true,
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
     },
     title: {
       type: String,
@@ -16,6 +16,11 @@ const taskSchema = new Schema(
     },
     description: {
       type: String,
+    },
+    type: {
+      type: String,
+      enum: ["task", "appointment", "note"],
+      default: "appointment",
     },
     date: {
       type: Date,
@@ -33,6 +38,14 @@ const taskSchema = new Schema(
       lat: { type: Number },
       lng: { type: Number },
     },
+    attendees: {
+      type: [
+        {
+          name: { type: String, required: true },
+        },
+      ],
+      default: [],
+    },
   },
   { versionKey: false, timestamps: true }
 );
@@ -41,5 +54,7 @@ export const Task = model("task", taskSchema);
 
 const addTaskSchema = Joi.object({
   title: Joi.string().required(),
-  date: Joi.string().required,
+  date: Joi.string().required(),
+  address: Joi.string().optional(),
+  attendees: Joi.array().items(Joi.string()).default([]),
 });

@@ -1,3 +1,4 @@
+import { env } from "../config/env.js";
 import jwt from "jsonwebtoken";
 import { HttpError } from "../helpers/index.js";
 import { User } from "../models/user.js";
@@ -9,9 +10,10 @@ export const isAuthenticated = async (req, res, next) => {
     next(HttpError(401));
   }
   try {
-    const { id } = jwt.verify(token, process.env.SECRET_KEY);
+    const { id } = jwt.verify(token, env.jwtSecret);
+
     const user = await User.findById(id);
-    if (!user || !user.accessToken || user.accessToken !== token) {
+    if (!user || !user.token || user.token !== token) {
       next(HttpError(401));
     }
     req.user = user;

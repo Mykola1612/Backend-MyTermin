@@ -1,3 +1,4 @@
+import { env } from "../config/env.js";
 import { ctrlWrapper, HttpError } from "../helpers/index.js";
 import { User } from "../models/user.js";
 import bcrypt from "bcrypt";
@@ -33,7 +34,7 @@ const signin = async (req, res) => {
     id: user._id,
   };
 
-  const token = jwt.sign(payload, process.env.SECRET_KEY, {
+  const token = jwt.sign(payload, env.jwtSecret, {
     expiresIn: "23h",
   });
   await User.findByIdAndUpdate(user._id, { token });
@@ -57,9 +58,21 @@ const logout = async (req, res, next) => {
   });
 };
 
+const googleSignup = async (req, res, next) => {
+  const { _id } = req.user;
+  const payload = {
+    id: _id,
+  };
+  const token = jwt.sign(payload, env.jwtSecret, {
+    expiresIn: "23h",
+  });
+  const user = await User.findByIdAndUpdate(_id, { token });
+};
+
 export default {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
+  googleSignup: ctrlWrapper(googleSignup),
 };

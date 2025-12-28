@@ -4,8 +4,6 @@ import { schemas } from "../../models/user.js";
 import ctrl from "../../controllers/authController.js";
 
 import passport from "passport";
-import { setupGoogleStrategy } from "../../config/googleAuth.js";
-setupGoogleStrategy();
 
 const router = express.Router();
 
@@ -21,11 +19,15 @@ router.get(
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", {
-    successRedirect: "/api",
-    failureRedirect: "/failure",
-    session: false,
-  })
+  passport.authenticate(
+    "google"
+    // {
+    // successRedirect: "/api",
+    // failureRedirect: "/failure",
+    // session: false,
+    // }
+  ),
+  ctrl.googleSignup
 );
 
 export default router;

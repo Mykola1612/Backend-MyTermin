@@ -1,8 +1,9 @@
+import { env } from "./config/env.js";
 import express from "express";
 import cors from "cors";
-
 import passport from "passport";
 import session from "express-session";
+import "./config/googleAuth.js";
 
 import tasksRouter from "./routes/api/tasks.js";
 import authRouter from "./routes/api/auth.js";
@@ -14,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 app.use(
   session({
-    secret: process.env.MY_SESSION_SECRET_KEY,
+    secret: env.sessionSecret,
     resave: true,
     saveUninitialized: true,
   })

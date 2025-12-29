@@ -10,4 +10,6 @@ export const env = {
   googleClientId: process.env.GOOGLE_CLIENT_ID,
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
   frontendUrl: process.env.FRONTEND_URL,
+  sendgridKey: process.env.SENDGRID_API_KEY,
+  baseUrl: process.env.BASE_URL,
 };

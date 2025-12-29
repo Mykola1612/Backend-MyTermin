@@ -22,7 +22,7 @@ passport.use(
       try {
         const user = await User.findOne({ email: profile._json.email });
         if (user) {
-          return cb(HttpError(409));
+          return cb(null, user);
         }
 
         const password = await bcrypt.hash(nanoid(), 10);

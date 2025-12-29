@@ -39,6 +39,14 @@ const userSchema = new Schema(
     theme: { type: String, enum: ["light", "dark"], default: "light" },
     token: {
       type: String,
+      default: null,
+    },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationCode: {
+      type: String,
       default: "",
     },
   },
@@ -59,9 +67,14 @@ const joiSigninSchema = Joi.object({
   password: Joi.string().min(6).required(),
 });
 
+const joiresendEmailSchema = Joi.object({
+  email: Joi.string().pattern(emailRegexp).required(),
+});
+
 const schemas = {
   joiSignupSchema,
   joiSigninSchema,
+  joiresendEmailSchema,
 };
 
 export { User, schemas };

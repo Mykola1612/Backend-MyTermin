@@ -12,6 +12,13 @@ router.post("/signin", validateBody(schemas.joiSigninSchema), ctrl.signin);
 router.get("/current", isAuthenticated, ctrl.getCurrent);
 router.post("/logout", isAuthenticated, ctrl.logout);
 
+router.get("/verify/:verificationCode", ctrl.verifyEmail);
+router.post(
+  "/verify",
+  validateBody(schemas.joiresendEmailSchema),
+  ctrl.resendVerifyEmail
+);
+
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["email", "profile"] })

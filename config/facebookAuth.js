@@ -4,32 +4,37 @@ import bcrypt from "bcrypt";
 import { User } from "../models/user.js";
 import { nanoid } from "nanoid";
 
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { HttpError } from "../helpers/HttpError.js";
+import { Strategy as FacebookStrategy } from "passport-facebook";
+import { HttpError } from "../helpers/index.js";
 
 passport.use(
-  new GoogleStrategy(
+  new FacebookStrategy(
     {
-      clientID: env.googleClientId,
-      clientSecret: env.googleClientSecret,
-      callbackURL: `${env.baseUrl}/api/auth/google/callback`,
+      clientID: env.facebookClientId,
+      clientSecret: env.facebookClientSecret,
+      callbackURL: `${env.baseUrl}/api/auth/facebook/callback`,
+      profileFields: ["displayName", "photos", "email"],
     },
+
     async function (accessToken, refreshToken, profile, cb) {
-      if (!profile._json.email_verified) {
-        return cb(HttpError(400, "Email not verified by Google"));
+      const email = profile._json.email;
+
+      if (!email) {
+        return cb(HttpError(400, "Facebook account has no email"));
       }
+
       try {
-        const user = await User.findOne({ email: profile._json.email });
+        const user = await User.findOne({ email });
         if (user) {
           return cb(null, user);
         }
 
-        const password = await bcrypt.hash(nanoid(), 10);
+        const password = await bcrypt.hash(nanoid(), 14);
         const newUser = await User.create({
           name: profile._json.name,
-          email: profile._json.email,
-          password,
+          email,
           verify: true,
+          password,
         });
 
         return cb(null, newUser);

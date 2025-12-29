@@ -4,6 +4,8 @@ import cors from "cors";
 import passport from "passport";
 import session from "express-session";
 import "./config/googleAuth.js";
+import "./config/facebookAuth.js";
+import "./config/githubAuth.js";
 
 import tasksRouter from "./routes/api/tasks.js";
 import authRouter from "./routes/api/auth.js";
@@ -25,12 +27,27 @@ app.use(passport.session());
 
 // DEV
 app.get("/api", async (req, res) => {
-  res.send("<a href='/api/auth/google'>Google auth</a>");
+  res.send(
+    "<div> <a href='/api/auth/google'>Google auth</a> <a href='/api/auth/facebook'>Facebook auth</a> <a href='/api/auth/github'>GitHub auth</a></div> "
+  );
 });
 
 app.get("/api/google", (req, res) => {
   res.json({
     message: "Google auth success",
+    token: req.query.token,
+  });
+});
+app.get("/api/github", (req, res) => {
+  res.json({
+    message: "GitHub auth success",
+    token: req.query.token,
+  });
+});
+
+app.get("/api/facebook", (req, res) => {
+  res.json({
+    message: "Facebook auth success",
     token: req.query.token,
   });
 });

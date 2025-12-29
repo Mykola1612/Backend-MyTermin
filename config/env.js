@@ -12,4 +12,8 @@ export const env = {
   frontendUrl: process.env.FRONTEND_URL,
   sendgridKey: process.env.SENDGRID_API_KEY,
   baseUrl: process.env.BASE_URL,
+  facebookClientId: process.env.FACEBOOK_CLIENT_ID,
+  facebookClientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+  githubClientId: process.env.GITHUB_CLIENT_ID,
+  githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
 };

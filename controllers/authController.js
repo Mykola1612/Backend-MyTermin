@@ -74,6 +74,8 @@ const resendVerifyEmail = async (req, res) => {
   });
 };
 
+const re
+
 const signin = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -132,6 +134,18 @@ const googleSignup = async (req, res, next) => {
   res.redirect(`${env.frontendUrl}/google?token=${token}`);
 };
 
+const facebookSignup = async (req, res, next) => {
+  const { _id } = req.user;
+  const payload = {
+    id: _id,
+  };
+  const token = jwt.sign(payload, env.jwtSecret, {
+    expiresIn: "23h",
+  });
+  const user = await User.findByIdAndUpdate(_id, { token });
+  res.redirect(`${env.frontendUrl}/facebook?token=${token}`);
+};
+
 export default {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
@@ -140,4 +154,5 @@ export default {
   googleSignup: ctrlWrapper(googleSignup),
   verifyEmail: ctrlWrapper(verifyEmail),
   resendVerifyEmail: ctrlWrapper(resendVerifyEmail),
+  facebookSignup: ctrlWrapper(facebookSignup),
 };

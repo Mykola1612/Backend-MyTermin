@@ -30,4 +30,26 @@ router.get(
   ctrl.googleSignup
 );
 
+router.get(
+  "/github",
+  passport.authenticate("github", { scope: ["user:email", "profile"] })
+);
+
+router.get(
+  "/github/callback",
+  passport.authenticate("github"),
+  ctrl.facebookSignup
+);
+
+router.get(
+  "/facebook",
+  passport.authenticate("facebook", { scope: ["email"] })
+);
+
+router.get(
+  "/facebook/callback",
+  passport.authenticate("facebook"),
+  ctrl.facebookSignup
+);
+
 export default router;

@@ -26,7 +26,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // DEV
-app.get("/api", async (req, res) => {
+app.get("/", async (req, res) => {
   res.send(
     "<div> <a href='/api/auth/google'>Google auth</a> <a href='/api/auth/facebook'>Facebook auth</a> <a href='/api/auth/github'>GitHub auth</a></div> "
   );

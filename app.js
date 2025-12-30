@@ -53,6 +53,32 @@ app.get("/api/facebook", (req, res) => {
 });
 //
 
+// privacy
+app.get("/privacy", (req, res) => {
+  res.setHeader("Content-Type", "text/html");
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>Privacy Policy</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; line-height: 1.6; }
+        h1 { color: #333; }
+      </style>
+    </head>
+    <body>
+      <h1>Privacy Policy</h1>
+      <p>This is the privacy policy of <strong>My Termin</strong> application.</p>
+      <p>We respect your privacy and ensure your data is safe.</p>
+      <p>For more information, contact us at: <a href="mailto:fermer2007pavlovich@gmail.com">fermer2007pavlovich@gmail.com</a></p>
+    </body>
+    </html>
+  `);
+});
+
+//
+
 app.use("/api/auth", authRouter);
 app.use("/api/tasks", tasksRouter);
 app.use("/api/users", usersRouter);

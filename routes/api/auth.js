@@ -11,6 +11,19 @@ router.post("/signup", validateBody(schemas.joiSignupSchema), ctrl.signup);
 router.post("/signin", validateBody(schemas.joiSigninSchema), ctrl.signin);
 router.get("/current", isAuthenticated, ctrl.getCurrent);
 router.post("/logout", isAuthenticated, ctrl.logout);
+router.delete(
+  "/delete/:userId",
+  isAuthenticated,
+  validateBody(schemas.joiDeleteSchema),
+  ctrl.userDelete
+);
+
+router.post(
+  "/forgot-password",
+  validateBody(schemas.joiforgotPasswordSchema),
+  ctrl.forgotPassword
+);
+router.post("/reset-password/:resetPasswordToken", ctrl.resetPassword);
 
 router.get("/verify/:verificationCode", ctrl.verifyEmail);
 router.post(

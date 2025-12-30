@@ -74,7 +74,47 @@ const resendVerifyEmail = async (req, res) => {
   });
 };
 
-const re
+const forgotPassword = async (req, res, next) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw HttpError(404);
+  }
+
+  const resetPasswordToken = nanoid();
+  await User.findByIdAndUpdate(user._id, { resetPasswordToken });
+
+  const forgotPasswordEmail = {
+    to: email,
+    subject: "Reset Password",
+    html: `<a href="${env.baseUrl}/api/auth/reset-password/${resetPasswordToken}">Click her if you password reset wont!</a>`,
+  };
+
+  await sendEmail(forgotPasswordEmail);
+  res.json({
+    message: "The email was poisoned",
+  });
+};
+const resetPassword = async (req, res, next) => {
+  const { resetPasswordToken } = req.params;
+  const { password } = req.body;
+  const user = await User.findOne({ resetPasswordToken });
+
+  if (!user) {
+    throw HttpError(404);
+  }
+  const hashPassword = await bcrypt.hash(password, 14);
+
+  await User.findByIdAndUpdate(user._id, {
+    password: hashPassword,
+    resetPasswordToken: null,
+  });
+
+  res.json({
+    message: "Password update succesfuly",
+  });
+};
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
@@ -103,6 +143,24 @@ const signin = async (req, res) => {
   });
   await User.findByIdAndUpdate(user._id, { token });
   res.json({ token });
+};
+
+const userDelete = async (req, res, next) => {
+  const { _id } = req.user;
+  const user = await User.findById(_id);
+
+  const { password } = req.body;
+
+  const passwordCompare = await bcrypt.compare(password, user.password);
+  console.log(passwordCompare);
+
+  if (!passwordCompare) {
+    throw HttpError(404, "Incorrect password");
+  }
+  await User.deleteOne({ _id });
+  res.status(201).json({
+    message: "User delete succesfuly",
+  });
 };
 
 const getCurrent = async (req, res, next) => {
@@ -155,4 +213,7 @@ export default {
   verifyEmail: ctrlWrapper(verifyEmail),
   resendVerifyEmail: ctrlWrapper(resendVerifyEmail),
   facebookSignup: ctrlWrapper(facebookSignup),
+  forgotPassword: ctrlWrapper(forgotPassword),
+  resetPassword: ctrlWrapper(resetPassword),
+  userDelete: ctrlWrapper(userDelete),
 };

@@ -49,6 +49,10 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
+    resetPasswordToken: {
+      type: String,
+      default: null,
+    },
   },
   { versionKey: false, timestamps: true }
 );
@@ -71,10 +75,20 @@ const joiresendEmailSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required(),
 });
 
+const joiforgotPasswordSchema = Joi.object({
+  email: Joi.string().pattern(emailRegexp).required(),
+});
+
+const joiDeleteSchema = Joi.object({
+  password: Joi.string().min(6).required(),
+});
+
 const schemas = {
   joiSignupSchema,
   joiSigninSchema,
   joiresendEmailSchema,
+  joiforgotPasswordSchema,
+  joiDeleteSchema,
 };
 
 export { User, schemas };

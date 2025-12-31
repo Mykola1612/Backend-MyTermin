@@ -1,6 +1,7 @@
 import { env } from "../config/env.js";
 import { ctrlWrapper } from "../helpers/index.js";
 import { Token } from "../models/token.js";
+import { User } from "../models/user.js";
 import tokenService from "../service/tokenService.js";
 import userService from "../service/userService.js";
 
@@ -67,9 +68,11 @@ const refresh = async (req, res) => {
 };
 
 const userDelete = async (req, res, next) => {
+  const { refreshToken } = req.cookies;
   const { _id } = req.user;
   const { password } = req.body;
   await userService.userDelete(_id, password);
+  await tokenService.deleteToken(refreshToken);
   res.clearCookie("refreshToken");
   res.status(201).json({
     message: "User delete succesfuly",
@@ -96,6 +99,8 @@ const logout = async (req, res, next) => {
 const googleSignup = async (req, res, next) => {
   const { _id } = req.user;
 
+  const user = await User.findById(_id);
+
   const tokens = await tokenService.generateTokens({ id: user._id });
 
   const token = await Token.create({
@@ -111,6 +116,7 @@ const googleSignup = async (req, res, next) => {
 
 const facebookSignup = async (req, res, next) => {
   const { _id } = req.user;
+  const user = await User.findById(_id);
 
   const tokens = await tokenService.generateTokens({ id: user._id });
 

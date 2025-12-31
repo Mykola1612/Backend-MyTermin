@@ -1,6 +1,7 @@
 import { env } from "../config/env.js";
 import jwt from "jsonwebtoken";
 import { Token } from "../models/token.js";
+import { HttpError } from "../helpers/HttpError.js";
 
 const generateTokens = async (payload) => {
   const accessToken = await jwt.sign(payload, env.jwtAccessSecret, {
@@ -52,10 +53,18 @@ const findRefreshToken = async (refreshToken) => {
   }
 };
 
+const deleteToken = async (refreshToken) => {
+  if (!refreshToken) {
+    throw HttpError(401);
+  }
+  await Token.deleteOne(refreshToken);
+};
+
 export default {
   saveToken,
   generateTokens,
   validateAccessToken,
   validateRefreshToken,
   findRefreshToken,
+  deleteToken,
 };

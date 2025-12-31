@@ -1,5 +1,4 @@
-import { env } from "../config/env.js";
-import jwt from "jsonwebtoken";
+import tokenService from "../service/tokenService.js";
 import { HttpError } from "../helpers/index.js";
 import { User } from "../models/user.js";
 
@@ -9,11 +8,19 @@ export const isAuthenticated = async (req, res, next) => {
   if (bearer !== "Bearer") {
     next(HttpError(401));
   }
+  if (!token) {
+    next(HttpError(401));
+  }
   try {
-    const { id } = jwt.verify(token, env.jwtSecret);
+    const userDate = await tokenService.validateAccessToken(token);
 
-    const user = await User.findById(id);
-    if (!user || !user.token || user.token !== token) {
+    if (!userDate) {
+      next(HttpError(404));
+    }
+
+    const user = await User.findById(userDate.id);
+
+    if (!user) {
       next(HttpError(401));
     }
     req.user = user;

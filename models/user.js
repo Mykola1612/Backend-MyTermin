@@ -22,10 +22,6 @@ const userSchema = new Schema(
       required: true,
       minlength: 6,
     },
-    accessToken: {
-      type: String,
-      default: null,
-    },
     refreshToken: { type: String, default: null },
     avatarUrl: {
       type: String,
@@ -37,10 +33,6 @@ const userSchema = new Schema(
       default: "free",
     },
     theme: { type: String, enum: ["light", "dark"], default: "light" },
-    token: {
-      type: String,
-      default: null,
-    },
     verify: {
       type: Boolean,
       default: false,

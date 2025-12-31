@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import passport from "passport";
 import session from "express-session";
+import cookieParser from "cookie-parser";
 import "./config/googleAuth.js";
 import "./config/facebookAuth.js";
 import "./config/githubAuth.js";
@@ -13,6 +14,7 @@ import usersRouter from "./routes/api/users.js";
 
 export const app = express();
 
+app.use(cookieParser());
 app.use(cors());
 app.use(express.json());
 app.use(

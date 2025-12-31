@@ -5,7 +5,8 @@ dotenv.config();
 export const env = {
   port: process.env.PORT || 3000,
   dbHost: process.env.DB_HOST,
-  jwtSecret: process.env.SECRET_KEY,
+  jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
+  jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
   sessionSecret: process.env.SESSION_SECRET_KEY,
   googleClientId: process.env.GOOGLE_CLIENT_ID,
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,

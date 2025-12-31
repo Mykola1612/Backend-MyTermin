@@ -11,6 +11,7 @@ router.post("/signup", validateBody(schemas.joiSignupSchema), ctrl.signup);
 router.post("/signin", validateBody(schemas.joiSigninSchema), ctrl.signin);
 router.get("/current", isAuthenticated, ctrl.getCurrent);
 router.post("/logout", isAuthenticated, ctrl.logout);
+router.get("/refresh", ctrl.refresh);
 router.delete(
   "/delete/:userId",
   isAuthenticated,

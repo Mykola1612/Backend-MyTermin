@@ -13,6 +13,7 @@ passport.use(
       clientID: env.githubClientId,
       clientSecret: env.githubClientSecret,
       callbackURL: `${env.baseUrl}/api/auth/github/callback`,
+      profileFields: ["displayName", "photos", "email"],
     },
     async function (accessToken, refreshToken, profile, cb) {
       console.log(profile);

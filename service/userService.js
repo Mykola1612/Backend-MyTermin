@@ -103,6 +103,9 @@ const refresh = async (refreshToken) => {
     throw HttpError(401);
   }
   const user = await User.findById(userDate.id);
+  if (!user) {
+    throw HttpError(404);
+  }
   const tokens = await tokenService.generateTokens({ id: user._id });
   tokenService.saveToken(user._id, tokens.refreshToken);
   const userDateUpdate = {

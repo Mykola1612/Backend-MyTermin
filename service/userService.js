@@ -145,12 +145,7 @@ const googleSignup = async (_id) => {
     await Token.findByIdAndUpdate(user._id, {
       refreshToken: hashRefreshToken,
     });
-    res.cookie("refreshToken", tokens.refreshToken, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-    res.redirect(`${env.frontendUrl}/google?token=${tokens.accessToken}`);
-    return;
+    return tokens;
   }
 
   const hashRefreshToken = await bcrypt.hash(tokens.refreshToken, 14);
@@ -158,11 +153,7 @@ const googleSignup = async (_id) => {
     user: _id,
     refreshToken: hashRefreshToken,
   });
-  res.cookie("refreshToken", tokens.refreshToken, {
-    httpOnly: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
-  res.redirect(`${env.frontendUrl}/google?token=${tokens.accessToken}`);
+  return tokens;
 };
 const facebookSignup = async (_id) => {
   const user = await User.findById(_id);
@@ -176,12 +167,7 @@ const facebookSignup = async (_id) => {
     await Token.findByIdAndUpdate(user._id, {
       refreshToken: hashRefreshToken,
     });
-    res.cookie("refreshToken", tokens.refreshToken, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-    res.redirect(`${env.frontendUrl}/facebook?token=${tokens.accessToken}`);
-    return;
+    return tokens;
   }
 
   const hashRefreshToken = await bcrypt.hash(tokens.refreshToken, 14);
@@ -189,11 +175,7 @@ const facebookSignup = async (_id) => {
     user: _id,
     refreshToken: hashRefreshToken,
   });
-  res.cookie("refreshToken", tokens.refreshToken, {
-    httpOnly: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
-  res.redirect(`${env.frontendUrl}/facebook?token=${tokens.accessToken}`);
+  return tokens;
 };
 
 export default {

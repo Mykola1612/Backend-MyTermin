@@ -1,3 +1,4 @@
+import { env } from "../config/env.js";
 import { ctrlWrapper } from "../helpers/index.js";
 import tokenService from "../service/tokenService.js";
 import userService from "../service/userService.js";
@@ -95,13 +96,23 @@ const logout = async (req, res, next) => {
 
 const googleSignup = async (req, res, next) => {
   const { _id } = req.user;
-  await userService.googleSignup(_id);
+  const tokens = await userService.googleSignup(_id);
+  res.cookie("refreshToken", tokens.refreshToken, {
+    httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+  res.redirect(`${env.frontendUrl}/facebook?token=${tokens.accessToken}`);
   res.json("User create success");
 };
 
 const facebookSignup = async (req, res, next) => {
   const { _id } = req.user;
-  await userService.facebookSignup(_id);
+  const tokens = await userService.facebookSignup(_id);
+  res.cookie("refreshToken", tokens.refreshToken, {
+    httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+  res.redirect(`${env.frontendUrl}/facebook?token=${tokens.accessToken}`);
   res.json("User create success");
 };
 

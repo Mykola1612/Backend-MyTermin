@@ -1,7 +1,4 @@
-import { env } from "../config/env.js";
-import { ctrlWrapper, HttpError } from "../helpers/index.js";
-import { Token } from "../models/token.js";
-import { User } from "../models/user.js";
+import { ctrlWrapper } from "../helpers/index.js";
 import tokenService from "../service/tokenService.js";
 import userService from "../service/userService.js";
 
@@ -98,69 +95,14 @@ const logout = async (req, res, next) => {
 
 const googleSignup = async (req, res, next) => {
   const { _id } = req.user;
-
-  const user = await User.findById(_id);
-  if (!user) {
-    throw HttpError(404);
-  }
-
-  const tokens = await tokenService.generateTokens({ id: user._id });
-
-  const refreshTokenDate = await Token.findOne({ user: user._id });
-  if (refreshTokenDate) {
-    const token = await Token.findByIdAndUpdate(user._id, {
-      refreshToken: tokens.refreshToken,
-    });
-    res.cookie("refreshToken", tokens.refreshToken, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-    res.redirect(`${env.frontendUrl}/google?token=${tokens.accessToken}`);
-    return;
-  }
-
-  const token = await Token.create({
-    user: _id,
-    refreshToken: tokens.refreshToken,
-  });
-  res.cookie("refreshToken", tokens.refreshToken, {
-    httpOnly: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
-  res.redirect(`${env.frontendUrl}/google?token=${tokens.accessToken}`);
+  await userService.googleSignup(_id);
+  res.json("User create success");
 };
 
 const facebookSignup = async (req, res, next) => {
   const { _id } = req.user;
-  const user = await User.findById(_id);
-  if (!user) {
-    throw HttpError(404);
-  }
-
-  const tokens = await tokenService.generateTokens({ id: user._id });
-
-  const refreshTokenDate = await Token.findOne({ user: user._id });
-  if (refreshTokenDate) {
-    const token = await Token.findByIdAndUpdate(user._id, {
-      refreshToken: tokens.refreshToken,
-    });
-    res.cookie("refreshToken", tokens.refreshToken, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-    res.redirect(`${env.frontendUrl}/facebook?token=${tokens.accessToken}`);
-    return;
-  }
-
-  await Token.create({
-    user: _id,
-    refreshToken: tokens.refreshToken,
-  });
-  res.cookie("refreshToken", tokens.refreshToken, {
-    httpOnly: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
-  res.redirect(`${env.frontendUrl}/facebook?token=${tokens.accessToken}`);
+  await userService.facebookSignup(_id);
+  res.json("User create success");
 };
 
 export default {

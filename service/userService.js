@@ -1,10 +1,10 @@
+import bcrypt from "bcrypt";
 import { nanoid } from "nanoid";
 import { HttpError } from "../helpers/index.js";
 import { User } from "../models/user.js";
-import emailService from "./emailService.js";
-import bcrypt from "bcrypt";
-import tokenService from "./tokenService.js";
 import { Token } from "../models/token.js";
+import emailService from "./emailService.js";
+import tokenService from "./tokenService.js";
 
 const signup = async (name, email, password) => {
   const user = await User.findOne({ email });
@@ -131,8 +131,70 @@ const logout = async (_id) => {
   await Token.deleteOne({ user: _id });
 };
 
-const googleSignup = async () => {};
-const facebookSignup = async () => {};
+const googleSignup = async (_id) => {
+  const user = await User.findById(_id);
+  if (!user) {
+    throw HttpError(404);
+  }
+
+  const tokens = await tokenService.generateTokens({ id: user._id });
+  const refreshTokenDate = await Token.findOne({ user: user._id });
+
+  if (refreshTokenDate) {
+    const hashRefreshToken = await bcrypt.hash(tokens.refreshToken, 14);
+    await Token.findByIdAndUpdate(user._id, {
+      refreshToken: hashRefreshToken,
+    });
+    res.cookie("refreshToken", tokens.refreshToken, {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.redirect(`${env.frontendUrl}/google?token=${tokens.accessToken}`);
+    return;
+  }
+
+  const hashRefreshToken = await bcrypt.hash(tokens.refreshToken, 14);
+  await Token.create({
+    user: _id,
+    refreshToken: hashRefreshToken,
+  });
+  res.cookie("refreshToken", tokens.refreshToken, {
+    httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+  res.redirect(`${env.frontendUrl}/google?token=${tokens.accessToken}`);
+};
+const facebookSignup = async (_id) => {
+  const user = await User.findById(_id);
+  if (!user) {
+    throw HttpError(404);
+  }
+  const tokens = await tokenService.generateTokens({ id: user._id });
+  const refreshTokenDate = await Token.findOne({ user: user._id });
+  if (refreshTokenDate) {
+    const hashRefreshToken = await bcrypt.hash(tokens.refreshToken, 14);
+    await Token.findByIdAndUpdate(user._id, {
+      refreshToken: hashRefreshToken,
+    });
+    res.cookie("refreshToken", tokens.refreshToken, {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.redirect(`${env.frontendUrl}/facebook?token=${tokens.accessToken}`);
+    return;
+  }
+
+  const hashRefreshToken = await bcrypt.hash(tokens.refreshToken, 14);
+  await Token.create({
+    user: _id,
+    refreshToken: hashRefreshToken,
+  });
+  res.cookie("refreshToken", tokens.refreshToken, {
+    httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+  res.redirect(`${env.frontendUrl}/facebook?token=${tokens.accessToken}`);
+};
 
 export default {
   signup,

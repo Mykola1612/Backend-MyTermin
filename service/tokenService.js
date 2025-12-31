@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { env } from "../config/env.js";
 import jwt from "jsonwebtoken";
 import { Token } from "../models/token.js";
@@ -18,10 +19,15 @@ const generateTokens = async (payload) => {
 const saveToken = async (userId, refreshToken) => {
   const tokenData = await Token.findOne({ user: userId });
   if (tokenData) {
-    tokenData.refreshToken = refreshToken;
+    const hashRefreshToken = await bcrypt.hash(refreshToken, 14);
+    tokenData.refreshToken = hashRefreshToken;
     return tokenData.save();
   }
-  const refreshTokenCreate = await Token.create({ user: userId, refreshToken });
+  const hashRefreshToken = await bcrypt.hash(refreshToken, 14);
+  const refreshTokenCreate = await Token.create({
+    user: userId,
+    refreshToken: hashRefreshToken,
+  });
   return refreshTokenCreate;
 };
 
@@ -36,6 +42,22 @@ const validateAccessToken = async (accessToken) => {
 
 const validateRefreshToken = async (refreshToken) => {
   try {
+    const userDateId = await jwt.verify(refreshToken, env.jwtRefreshSecret);
+    if (!userDateId) {
+      throw HttpError(401, "Token invalid");
+    }
+    const refreshTokenDate = await Token.findOne({ user: userDateId.id });
+    if (!refreshTokenDate) {
+      throw HttpError(404);
+    }
+    const hashRefreshToken = await bcrypt.compare(
+      refreshToken,
+      refreshTokenDate.refreshToken
+    );
+    if (!hashRefreshToken) {
+      throw HttpError(404);
+    }
+
     const userDate = await jwt.verify(refreshToken, env.jwtRefreshSecret);
     return userDate;
   } catch (error) {
@@ -45,7 +67,20 @@ const validateRefreshToken = async (refreshToken) => {
 
 const findRefreshToken = async (refreshToken) => {
   try {
-    const userDate = await Token.findOne({ refreshToken });
+    const userDateId = await jwt.verify(refreshToken, env.jwtRefreshSecret);
+    if (!userDateId) {
+      throw HttpError(401, "Token invalid");
+    }
+    const refreshTokenDate = await Token.findOne({ user: userDateId.id });
+    if (!refreshTokenDate) {
+      throw HttpError(404);
+    }
+    const userDate = await Token.findOne({
+      refreshToken: refreshTokenDate.refreshToken,
+    });
+    if (!userDate) {
+      throw HttpError(404);
+    }
     return userDate;
   } catch (error) {
     console.error(error);

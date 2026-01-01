@@ -42,11 +42,11 @@ const validateAccessToken = async (accessToken) => {
 
 const validateRefreshToken = async (refreshToken) => {
   try {
-    const userDateId = await jwt.verify(refreshToken, env.jwtRefreshSecret);
-    if (!userDateId) {
-      throw HttpError(401, "Token invalid");
+    const userDate = await jwt.verify(refreshToken, env.jwtRefreshSecret);
+    if (!userDate) {
+      throw HttpError(401);
     }
-    const refreshTokenDate = await Token.findOne({ user: userDateId.id });
+    const refreshTokenDate = await Token.findOne({ user: userDate.id });
     if (!refreshTokenDate) {
       throw HttpError(404);
     }
@@ -55,35 +55,11 @@ const validateRefreshToken = async (refreshToken) => {
       refreshTokenDate.refreshToken
     );
     if (!hashRefreshToken) {
-      throw HttpError(404);
+      throw HttpError(401);
     }
 
-    const userDate = await jwt.verify(refreshToken, env.jwtRefreshSecret);
     return userDate;
   } catch (error) {
-    return null;
-  }
-};
-
-const findRefreshToken = async (refreshToken) => {
-  try {
-    const userDateId = await jwt.verify(refreshToken, env.jwtRefreshSecret);
-    if (!userDateId) {
-      throw HttpError(401, "Token invalid");
-    }
-    const refreshTokenDate = await Token.findOne({ user: userDateId.id });
-    if (!refreshTokenDate) {
-      throw HttpError(404);
-    }
-    const userDate = await Token.findOne({
-      refreshToken: refreshTokenDate.refreshToken,
-    });
-    if (!userDate) {
-      throw HttpError(404);
-    }
-    return userDate;
-  } catch (error) {
-    console.error(error);
     return null;
   }
 };
@@ -92,7 +68,8 @@ const deleteToken = async (refreshToken) => {
   if (!refreshToken) {
     throw HttpError(401);
   }
-  await Token.deleteOne(refreshToken);
+  const userDate = await jwt.verify(refreshToken, env.jwtRefreshSecret);
+  await Token.deleteOne({ user: userDate.id });
 };
 
 export default {
@@ -100,6 +77,5 @@ export default {
   generateTokens,
   validateAccessToken,
   validateRefreshToken,
-  findRefreshToken,
   deleteToken,
 };

@@ -9,8 +9,6 @@ import tokenService from "./tokenService.js";
 const signup = async (name, email, password) => {
   const user = await User.findOne({ email });
   if (user) {
-    console.log("sjcedgghcg");
-
     throw HttpError(409, "Email already in use");
   }
   const verificationCode = nanoid();
@@ -98,8 +96,7 @@ const refresh = async (refreshToken) => {
     throw HttpError(401);
   }
   const userDate = await tokenService.validateRefreshToken(refreshToken);
-  const findToken = await tokenService.findRefreshToken(refreshToken);
-  if (!userDate || !findToken) {
+  if (!userDate) {
     throw HttpError(401);
   }
   const user = await User.findById(userDate.id);
@@ -121,9 +118,12 @@ const refresh = async (refreshToken) => {
 
 const userDelete = async (_id, password) => {
   const user = await User.findById(_id);
+  if (!user) {
+    throw HttpError(404);
+  }
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) {
-    throw HttpError(404, "Incorrect password");
+    throw HttpError(401);
   }
   await User.deleteOne({ _id });
 };
@@ -142,9 +142,12 @@ const googleSignup = async (_id) => {
 
   if (refreshTokenDate) {
     const hashRefreshToken = await bcrypt.hash(tokens.refreshToken, 14);
-    await Token.findByIdAndUpdate(user._id, {
-      refreshToken: hashRefreshToken,
-    });
+    await Token.findOneAndUpdate(
+      { user: user._id },
+      {
+        refreshToken: hashRefreshToken,
+      }
+    );
     return tokens;
   }
 
@@ -164,9 +167,12 @@ const facebookSignup = async (_id) => {
   const refreshTokenDate = await Token.findOne({ user: user._id });
   if (refreshTokenDate) {
     const hashRefreshToken = await bcrypt.hash(tokens.refreshToken, 14);
-    await Token.findByIdAndUpdate(user._id, {
-      refreshToken: hashRefreshToken,
-    });
+    await Token.findOneAndUpdate(
+      { user: user._id },
+      {
+        refreshToken: hashRefreshToken,
+      }
+    );
     return tokens;
   }
 

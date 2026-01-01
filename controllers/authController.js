@@ -102,7 +102,6 @@ const googleSignup = async (req, res, next) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   res.redirect(`${env.frontendUrl}/facebook?token=${tokens.accessToken}`);
-  res.json("User create success");
 };
 
 const facebookSignup = async (req, res, next) => {
@@ -113,7 +112,6 @@ const facebookSignup = async (req, res, next) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   res.redirect(`${env.frontendUrl}/facebook?token=${tokens.accessToken}`);
-  res.json("User create success");
 };
 
 export default {

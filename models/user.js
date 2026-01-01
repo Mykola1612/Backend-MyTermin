@@ -74,12 +74,17 @@ const joiDeleteSchema = Joi.object({
   password: Joi.string().min(6).required(),
 });
 
+const joiResetPasswordSchema = Joi.object({
+  password: Joi.string().min(6).required(),
+});
+
 const schemas = {
   joiSignupSchema,
   joiSigninSchema,
   joiresendEmailSchema,
   joiforgotPasswordSchema,
   joiDeleteSchema,
+  joiResetPasswordSchema,
 };
 
 export { User, schemas };

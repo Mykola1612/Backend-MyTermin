@@ -26,11 +26,14 @@ const taskSchema = new Schema(
       type: Date,
       required: true,
     },
-    notifications: [
-      {
-        type: Date,
-      },
-    ],
+    notifications: {
+      type: [Number],
+      default: [30],
+    },
+    notificationSent: {
+      type: [Boolean],
+      default: [false],
+    },
     address: {
       type: String,
     },
@@ -50,11 +53,30 @@ const taskSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-export const Task = model("task", taskSchema);
+const Task = model("task", taskSchema);
 
-const addTaskSchema = Joi.object({
+const joiAddTaskSchema = Joi.object({
   title: Joi.string().required(),
+  description: Joi.string(),
   date: Joi.string().required(),
   address: Joi.string().optional(),
-  attendees: Joi.array().items(Joi.string()).default([]),
+  attendees: Joi.array()
+    .items(Joi.object({ name: Joi.string().required() }))
+    .default([]),
 });
+const joiUpdateTaskSchema = Joi.object({
+  title: Joi.string(),
+  description: Joi.string(),
+  date: Joi.string(),
+  address: Joi.string(),
+  attendees: Joi.array()
+    .items(Joi.object({ name: Joi.string().required() }))
+    .default([]),
+});
+
+const schemas = {
+  joiAddTaskSchema,
+  joiUpdateTaskSchema,
+};
+
+export { Task, schemas };

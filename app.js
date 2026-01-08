@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import "./config/googleAuth.js";
 import "./config/facebookAuth.js";
 import "./config/githubAuth.js";
+import "./jobs/terminNotifications.job.js";
 
 import tasksRouter from "./routes/api/tasks.js";
 import authRouter from "./routes/api/auth.js";
@@ -15,7 +16,7 @@ import usersRouter from "./routes/api/users.js";
 export const app = express();
 
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({ origin: env.frontendUrl, credentials: true }));
 app.use(express.json());
 app.use(
   session({

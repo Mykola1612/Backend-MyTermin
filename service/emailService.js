@@ -20,8 +20,19 @@ export const forgotPasswordEmail = async (email, resetPasswordToken) => {
 
   await sendEmail(forgotPasswordEmail);
 };
+export const terminNotifications = async (email) => {
+  const terminNotificationsEmail = {
+    to: email,
+    subject: "My Termin",
+    html: `  <p>You have an upcoming appointment.</p>
+      <p>Please log in to your account on <b><a href="${env.frontendUrl}">My Termin</a></b> to see the details.</p>`,
+  };
+
+  await sendEmail(terminNotificationsEmail);
+};
 
 export default {
   sendEmailVerify,
   forgotPasswordEmail,
+  terminNotifications,
 };

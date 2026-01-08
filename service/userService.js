@@ -86,8 +86,10 @@ const signin = async (email, password) => {
   return {
     refreshToken: tokens.refreshToken,
     accessToken: tokens.accessToken,
-    name: user.name,
-    email: user.email,
+    user: {
+      name: user.name,
+      email: user.email,
+    },
   };
 };
 

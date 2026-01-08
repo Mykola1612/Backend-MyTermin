@@ -52,7 +52,7 @@ const signin = async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  res.json({ accessToken: signin.accessToken });
+  res.json({ user: signin.user, accessToken: signin.accessToken });
 };
 
 const refresh = async (req, res) => {

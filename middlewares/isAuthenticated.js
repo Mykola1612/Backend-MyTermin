@@ -15,7 +15,7 @@ export const isAuthenticated = async (req, res, next) => {
     const userDate = await tokenService.validateAccessToken(token);
 
     if (!userDate) {
-      next(HttpError(404));
+      next(HttpError(401));
     }
 
     const user = await User.findById(userDate.id);

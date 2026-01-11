@@ -129,6 +129,7 @@ const userDelete = async (_id, password) => {
   }
   await User.deleteOne({ _id });
 };
+
 const logout = async (_id) => {
   await Token.deleteOne({ user: _id });
 };
